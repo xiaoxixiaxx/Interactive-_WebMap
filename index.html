@@ -1,1 +1,234 @@
 
+<!--include lesflet js css, contain header element and body element-->
+
+<!DOCTYPE html><html>
+<head><title>Leaflet Essentials</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css"/>
+</head>
+<body>
+<script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
+
+<!--the tag holds the map needs a defined height and a defined width-->
+
+<div id="mapid" style="width: 600px; height: 400px; margin: auto"></div>     
+<script>
+
+
+// define variable mymap, Set the map view to be centered on the UW Seattle campus and the zoom level as 16.
+
+var mymap = L.map('mapid').setView([47.656896, -122.307511],16);
+L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(mymap);
+
+// define myZoneUW, make a variable to hold the GeoJSON data. using geojson.io to draw polygon and get JSON code.
+//The GeoJSON data includes properties (keys and values) and geometry information.
+
+var myZoneUW = {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Suzzallo and Allen Library",                  //polygon's property
+		"PopupContents": "The area where I usually study",     //polygon's property
+        "Indoor": "Yes"                                        //polygon's property
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [                     //the coordinates from GeoJSON                 
+          [
+            [
+              -122.30739802122116,                     
+              47.65587781988791
+            ],
+            [
+              -122.30788618326187,
+              47.6559374405384
+            ],
+            [
+              -122.3079264163971,
+              47.65560139598254
+            ],
+            [
+              -122.30788350105286,
+              47.65559620172849
+            ],
+            [
+              -122.30789121240376,
+              47.65557113379948
+            ],
+            [
+              -122.30748385190964,
+              47.65552280460506
+            ],
+            [
+              -122.30740472674371,
+              47.65587962657528
+            ],
+            [
+              -122.30739802122116,
+              47.65587781988791
+            ]
+          ]
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "Odegaard Undergraduate Library",                            //polygon's properties
+        "PopupContents": "The area where I discuss with my frients",
+        "Indoor": "Yes"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [                        //the coordinates from GeoJSON
+          [
+            [
+              -122.31078565120697,
+              47.65671837443967
+            ],
+            [
+              -122.310791015625,
+              47.65658106822634
+            ],
+            [
+              -122.31082789599895,
+              47.65658242322365
+            ],
+            [
+              -122.31083661317824,
+              47.65633219979444
+            ],
+            [
+              -122.31079906225203,
+              47.656328586450925
+            ],
+            [
+              -122.31079906225203,
+              47.65622199270516
+            ],
+            [
+              -122.31063544750212,
+              47.65621386266477
+            ],
+            [
+              -122.31063678860664,
+              47.656191279212614
+            ],
+            [
+              -122.31023445725441,
+              47.65618405250586
+            ],
+            [
+              -122.31023311614989,
+              47.65620753929915
+            ],
+            [
+              -122.31008023023604,
+              47.656210249313084
+            ],
+            [
+              -122.31006547808649,
+              47.6563087130572
+            ],
+            [
+              -122.31003329157829,
+              47.656319553091095
+            ],
+            [
+              -122.31002658605576,
+              47.65651286665066
+            ],
+            [
+              -122.30992197990419,
+              47.65651557664874
+            ],
+            [
+              -122.30991527438164,
+              47.65666914297707
+            ],
+            [
+              -122.31022104620932,
+              47.65667907960629
+            ],
+            [
+              -122.31021970510483,
+              47.65676218588567
+            ],
+            [
+              -122.31062471866608,
+              47.656773025825416
+            ],
+            [
+              -122.3106300830841,
+              47.65671430945827
+            ],
+            [
+              -122.31078565120697,
+              47.65671837443967
+            ]
+          ]
+        ]
+      }
+    },
+	{
+      "type": "Feature",
+      "properties": {
+        "name": "The Quad",                                 //polygon's properties
+        "PopupContents": "My favorite lawn",
+        "Indoor": "No"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [                                    /*the coordinates from GeoJSON*/
+          [
+            [
+              -122.30839848518372,
+              47.656956401131566
+            ],
+            [
+              -122.30772256851196,
+              47.65648847666158
+            ],
+            [
+              -122.30602741241455,
+              47.657612210995694
+            ],
+            [
+              -122.30670601129532,
+              47.65808193200634
+            ],
+            [
+              -122.30839848518372,
+              47.656956401131566
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}
+
+//creating a geojsonlayer variable that is an instance of the L.geoJSON class, then add it to my map.
+//set the colors, stroke, weight, opacity, fill color, and more of our GeoJSON features. 
+//bind pop ups and style functions on mouse hovering event
+
+var geojsonLayer=L.geoJSON(myZoneUW, {style:styleFunction, onEachFeature: happenHover}).addTo(mymap);        
+function styleFunction() {return {color: "purple"}; }                                            //make feature purple in the initial state
+function newStyle(layer){layer.setStyle({color:"blue"});}                        //turn feature blue
+function oldStyle(layer){layer.setStyle({color:"green"});}    
+function openPopup(layer){layer.openPopup();}                                 //turn feature green
+
+function happenHover(feature,layer){                                                             //add the hovering effect
+//layer = e.target;
+layer.bindPopup(feature.properties.name + '<br>' +                                                //add pop ups to map that display the values associated with the title key
+	   feature.properties.PopupContents, {closeButton: false});
+		layer.on('mouseover', function(){layer.openPopup();});                                   //make map interactive with mouse
+		layer.on('mouseover', function(){layer.setStyle({color:"blue"});});                                                         //add event listeners
+		layer.on('mouseout', function(){layer.setStyle({color:"green"});});
+		layer.on('mouseout', function() {layer.closePopup();});} 
+
+
+</script>
+</body>
+</html>
